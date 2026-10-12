@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: config-server
+  profiles:
+    active:
+    - git
+  cloud:
+    config:
+      server:
+        # Git-backed configuration (active). Files live inside this repo at
+        # configserver/src/main/resources/config/<app>[-<profile>].properties|yml
+        git:
+          uri: https://github.com/account4sanjay/license-server-ch6
+          search-paths: configserver/src/main/resources/config
+          default-label: main
+          clone-on-start: true
+        # Classpath-backed configuration (fallback). To use it instead, set
+        # spring.profiles.active to "native".
+        native:
+          search-locations: classpath:/config
+
+server:
+  port: 8071
+
+encrypt:
+  key: fje83Ki8403Iod87dne7Yjsl3THueh48jfuO9j4U2hf64Lo
+
+
+#Enable all Spring Boot Actuator endpoints.
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
