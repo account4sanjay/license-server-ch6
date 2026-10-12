@@ -1,3 +1,6 @@
+# Shared settings for every Eureka peer. Each container activates one of the
+# profiles peer1, peer2 or peer3 (see eureka-server-peer*.yml), which sets the
+# instance hostname and the URLs of the other two peers.
 spring:
   application:
     name: eureka-server
@@ -8,19 +11,20 @@ server:
   port: 8070
 eureka:
   instance:
-    hostname: eurekaserver
+    preferIpAddress: false
   client:
-    registerWithEureka: false
-    fetchRegistry: false
+    # In a highly-available cluster each Eureka server registers with its peers
+    # and fetches their registries, so every peer holds the full registry.
+    registerWithEureka: true
+    fetchRegistry: true
     serviceUrl:
-      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+      defaultZone: http://eurekaserver1:8070/eureka/,http://eurekaserver2:8070/eureka/,http://eurekaserver3:8070/eureka/
   server:
     waitTimeInMsWhenSyncEmpty: 5
-      
-      
+    enableSelfPreservation: false
+
 management:
   endpoints:
     web:
       exposure:
         include: "*"
-   

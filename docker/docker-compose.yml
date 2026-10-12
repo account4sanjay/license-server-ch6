@@ -30,19 +30,54 @@ services:
       backend:
         aliases:
           - "configserver"
-  eurekaserver:
+  eurekaserver1:
     image: ostock/eurekaserver:0.0.1-SNAPSHOT
+    hostname: eurekaserver1
+    environment:
+      SPRING_PROFILES_ACTIVE: "peer1"
     ports:
       - "8070:8070"
     depends_on:
       database:
         condition: service_healthy
       configserver:
-        condition: service_started  
+        condition: service_started
     networks:
       backend:
         aliases:
-          - "eurekaserver"
+          - "eurekaserver1"
+  eurekaserver2:
+    image: ostock/eurekaserver:0.0.1-SNAPSHOT
+    hostname: eurekaserver2
+    environment:
+      SPRING_PROFILES_ACTIVE: "peer2"
+    ports:
+      - "8072:8070"
+    depends_on:
+      database:
+        condition: service_healthy
+      configserver:
+        condition: service_started
+    networks:
+      backend:
+        aliases:
+          - "eurekaserver2"
+  eurekaserver3:
+    image: ostock/eurekaserver:0.0.1-SNAPSHOT
+    hostname: eurekaserver3
+    environment:
+      SPRING_PROFILES_ACTIVE: "peer3"
+    ports:
+      - "8073:8070"
+    depends_on:
+      database:
+        condition: service_healthy
+      configserver:
+        condition: service_started
+    networks:
+      backend:
+        aliases:
+          - "eurekaserver3"
   licensingservice:
     image: ostock/licensing-service:0.0.3-SNAPSHOT
     environment:

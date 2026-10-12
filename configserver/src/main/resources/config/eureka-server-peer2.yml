@@ -1,0 +1,7 @@
+# Eureka peer 2 of 3. Activated with SPRING_PROFILES_ACTIVE=peer2.
+eureka:
+  instance:
+    hostname: eurekaserver2
+  client:
+    serviceUrl:
+      defaultZone: http://eurekaserver1:8070/eureka/,http://eurekaserver3:8070/eureka/
