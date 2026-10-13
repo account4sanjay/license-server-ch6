@@ -35,24 +35,20 @@ Dashboards: http://localhost:8070, http://localhost:8072, http://localhost:8073.
 Each should list `EUREKA-SERVER` with three instances plus the two business
 services, and show the other peers under "DS Replicas".
 
-## Build
+## Build and run
 
-Requires JDK 11+ and Maven. Images are built with the fabric8 docker-maven-plugin,
-which works with Docker or Podman.
-
-```sh
-./build.sh                      # mvn clean package docker:build (starts Podman if needed)
-./build.sh clean package        # pass any other goals straight to mvn
-```
-
-## Run
+Requires JDK 11+, Maven, and Podman or Docker. Images are built with the
+fabric8 docker-maven-plugin.
 
 ```sh
-cd docker
-podman compose up -d            # or: docker compose up -d
-podman compose logs -f
-podman compose down
+./start.sh                # mvn clean package docker:build, then compose up -d
+./start.sh --skip-tests   # same, without the unit tests
+./start.sh --no-build     # just start the containers from existing images
+./stop.sh                 # compose down (containers and network removed, images kept)
 ```
+
+`start.sh` starts the Podman machine if needed and exports `DOCKER_HOST` for the
+Maven plugin. To follow the logs: `cd docker && podman compose logs -f`.
 
 ## Try it
 
