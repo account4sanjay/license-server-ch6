@@ -1,9 +1,9 @@
 package com.optimagrowth.organization.service;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.optimagrowth.organization.model.Organization;
@@ -11,27 +11,38 @@ import com.optimagrowth.organization.repository.OrganizationRepository;
 
 @Service
 public class OrganizationService {
-	
-    @Autowired
-    private OrganizationRepository repository;
 
-    public Organization findById(String organizationId) {
-    	Optional<Organization> opt = repository.findById(organizationId);
-        return (opt.isPresent()) ? opt.get() : null;
-    }
+	@Autowired
+	private OrganizationRepository repository;
 
-    public Organization create(Organization organization){
-    	organization.setId( UUID.randomUUID().toString());
-        organization = repository.save(organization);
-        return organization;
+	public Organization findById(String organizationId) {
+		return repository.findById(organizationId)
+				.orElseThrow(() -> new OrganizationNotFoundException(organizationId));
+	}
 
-    }
+	public Organization create(Organization organization) {
+		organization.setId(UUID.randomUUID().toString());
+		return repository.save(organization);
+	}
 
-    public void update(Organization organization){
-    	repository.save(organization);
-    }
+	public Organization update(String organizationId, Organization organization) {
+		requireExists(organizationId);
+		organization.setId(organizationId);
+		return repository.save(organization);
+	}
 
-    public void delete(Organization organization){
-    	repository.deleteById(organization.getId());
-    }
+	public void delete(String organizationId) {
+		requireExists(organizationId);
+		try {
+			repository.deleteById(organizationId);
+		} catch (DataIntegrityViolationException e) {
+			throw new OrganizationInUseException(organizationId, e);
+		}
+	}
+
+	private void requireExists(String organizationId) {
+		if (!repository.existsById(organizationId)) {
+			throw new OrganizationNotFoundException(organizationId);
+		}
+	}
 }

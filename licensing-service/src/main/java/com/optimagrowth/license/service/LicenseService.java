@@ -92,12 +92,18 @@ public class LicenseService {
 
 	public String deleteLicense(String licenseId){
 		String responseMessage = null;
-		License license = new License();
-		license.setLicenseId(licenseId);
-		licenseRepository.delete(license);
+		requireExists(licenseId);
+		licenseRepository.deleteById(licenseId);
 		responseMessage = String.format(messages.getMessage("license.delete.message", null, null),licenseId);
 		return responseMessage;
 
+	}
+
+	/** Translated to HTTP 404 by {@code ExceptionController}. */
+	private void requireExists(String licenseId) {
+		if (licenseId == null || !licenseRepository.existsById(licenseId)) {
+			throw new IllegalArgumentException(String.format(messages.getMessage("license.notfound.message", null, null), licenseId));
+		}
 	}
 
 	public List<License> getLicensesByOrganization(String organizationId) {
