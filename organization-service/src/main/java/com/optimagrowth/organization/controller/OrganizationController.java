@@ -1,7 +1,6 @@
 package com.optimagrowth.organization.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,7 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.optimagrowth.organization.model.Organization;
@@ -41,10 +39,12 @@ public class OrganizationController {
 		return ResponseEntity.ok(service.create(organization));
 	}
 
-	/** 204 when deleted, or 404 when the id does not exist. */
+	/**
+	 * 200 with a confirmation message (same style as the licensing service),
+	 * 404 when the id does not exist, or 409 when licenses still reference it.
+	 */
 	@DeleteMapping(value = "/{organizationId}")
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void deleteOrganization(@PathVariable("organizationId") String organizationId) {
-		service.delete(organizationId);
+	public ResponseEntity<String> deleteOrganization(@PathVariable("organizationId") String organizationId) {
+		return ResponseEntity.ok(service.delete(organizationId));
 	}
 }

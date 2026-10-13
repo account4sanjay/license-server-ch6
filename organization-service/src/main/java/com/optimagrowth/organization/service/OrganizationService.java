@@ -31,13 +31,14 @@ public class OrganizationService {
 		return repository.save(organization);
 	}
 
-	public void delete(String organizationId) {
+	public String delete(String organizationId) {
 		requireExists(organizationId);
 		try {
 			repository.deleteById(organizationId);
 		} catch (DataIntegrityViolationException e) {
 			throw new OrganizationInUseException(organizationId, e);
 		}
+		return String.format("Deleting organization with id %s", organizationId);
 	}
 
 	private void requireExists(String organizationId) {
